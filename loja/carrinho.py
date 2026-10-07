@@ -1,6 +1,6 @@
 from .calculos import frete, total_carrinho
 from .produto import Produto
-from .promocao import SemPromocao                      # MUDOU: import novo
+from .promocao import Promocao, SemPromocao                    # MUDOU: import novo
 
 
 class CarrinhoFinalizadoError(Exception):
@@ -8,10 +8,13 @@ class CarrinhoFinalizadoError(Exception):
 
 
 class Carrinho:
-    def __init__(self, promocao=None):                 # MUDOU: recebe promocao
-        self._itens = []   # pares (produto, quantidade)
+    def __init__(self, promocao=None):
+        promocao = promocao or SemPromocao()
+        if not isinstance(promocao, Promocao):
+            raise TypeError("a promoção deve seguir o contrato Promocao")
+        self._itens = []
         self._finalizado = False
-        self.promocao = promocao or SemPromocao()      # MUDOU: linha nova
+        self.promocao = promocao    # MUDOU: linha nova
 
     def adicionar(self, produto, quantidade=1):
         if self._finalizado:
